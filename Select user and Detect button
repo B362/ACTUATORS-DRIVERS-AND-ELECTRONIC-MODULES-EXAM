@@ -1,276 +1,159 @@
-#include <stdio.h>
-
-// this constant won't change:
-const int  buttonPin = 2;    // the pin that the pushbutton is attached to
-const int ledPin = 13;       // the pin that the LED is attached to
+// set pin numbers:
+const int buttonPin1 = 4;     // the number of the pushbutton1 pin
+const int buttonPin2 = 2;     // the number of the pushbutton2 pin
+const int buttonPin3 = 7;     // the number of the pushbutton3 pin
+const int ledPin1 = 8;        // the number of the LED1 anode(+) pin
+const int ledPin2 = 12;       // the number of the LED2 anode(+) pin
 
 // Variables will change:
-int buttonPushCounter = 0;   // counter for the number of button presses
-int buttonState = 0;         // current state of the button
-int lastButtonState = 0;     // previous state of the button
+int ledState1 = LOW;         // the current state of the LED1
+int ledState2 = LOW;         // the current state of the LED2
+int buttonState1;             // the current reading from the input pin1
+int buttonState2;             // the current reading from the input pin2
+int buttonState3;             // the current reading from the input pin3
+int lastButtonState1 = LOW;    // the previous reading from the input pin1
+int lastButtonState2 = LOW;    // the previous reading from the input pin2
+int lastButtonState3 = LOW;    // the previous reading from the input pin3
 
-void setup() {
-  // initialize the button pin as a input:
-  pinMode(buttonPin, INPUT);
-  // initialize the LED as an output:
-  pinMode(ledPin, OUTPUT);
-  // initialize serial communication:
-  Serial.begin(9600);
+unsigned long lastDebounceTime = 0;   // the last time the output pin was toggled
+long debounceDelay = 20000;           // the debounce time in micro second
+
+unsigned long randNumber;                 // Generated random number
+unsigned long minRandomNumber = 2000;     // minimum number used to specify the range of random number
+unsigned long maxRandomNumber = 5000;     // maximum number used to specify the range of random number
+
+unsigned long time1,time2;
+int button3Pressed = LOW;
+int printcount = 0;
+
+int takeReading = LOW;
+
+//following variable help in reading buttons pins
+int reading1;
+int reading2;
+int reading3;
+
+//following variable help in reading button corresponding to perticular led i.e LED1 --> BUTTON1 and LED2 --> BUTTON2
+int oddNumber ;
+int evenNumber ;
+
+void setup()
+{
+      pinMode(buttonPin1, INPUT);
+      pinMode(buttonPin2, INPUT);
+      pinMode(buttonPin3, INPUT);
+      pinMode(ledPin1, OUTPUT);
+      pinMode(ledPin2, OUTPUT);
+      
+      Serial.begin(115200);
+     
+      digitalWrite(ledPin1, ledState1);
+      digitalWrite(ledPin2, ledState2);
+      randomSeed(analogRead(0));
 }
-
-void loop() {
-  // read the sensor:
-  if (Serial.available() > 0) {
-    int number = Serial.read();
-  // read the pushbutton input pin:
-  buttonState = digitalRead(buttonPin);
     
-switch (number) {
-case 1: //selecting user
-  Serial.println("User 1"); //prints User 1
-    {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
-  
-case 2://selecting user
-  Serial.println("User 2");
-    {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
+void loop() 
+{
+      if( printcount == 0)
+      {
+          Serial.println("press button 3 when you are ready");
+          printcount = 1;
+          takeReading = LOW;    // not to read button number 1 and 2
+          oddNumber = LOW;
+          evenNumber = LOW;
+      }
+      
+      if( button3Pressed == HIGH)
+      {
+          digitalWrite(ledPin1, LOW);
+          digitalWrite(ledPin2, LOW);
+          randNumber = random(minRandomNumber,maxRandomNumber);     //in our code we have kept them as 2000 to 5000
+          delay(randNumber);
+          if ( randNumber & 1 == 1)
+          {
+              digitalWrite(ledPin1, HIGH);
+              digitalWrite(ledPin2, LOW);
+              time1 = micros();
+              //Serial.println("ODD");
+              oddNumber = HIGH;
+          }
+          else
+          {
+              digitalWrite(ledPin1, LOW);
+              digitalWrite(ledPin2, HIGH);
+              time1 = micros();
+              //Serial.println("EVEN");
+              evenNumber = HIGH;
+          }
+          button3Pressed = LOW;
+          
+      }
 
-case 3://selecting user
-  Serial.println("User 3");
-  {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
-  case 4://selecting user
-  Serial.println("User 4"); 
-  {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
-  case 5: //selecting user
-  Serial.println("User 5");
-  {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
-  case 6: //selecting user
-  Serial.println("User 6");
-  {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
-  case 7: //selecting user
-  Serial.println("User 7"); 
-  {// compare the buttonState to its previous state
-    if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // went from off to on:
-      buttonPushCounter++;
-      Serial.println("on");
-      Serial.print("number of button pushes:  ");
-      Serial.println(buttonPushCounter);
-    } else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(50);
-     // save the current state as the last state,
-  //for next time through the loop
-  lastButtonState = buttonState;
-  // turns on the LED every 3 button pushes by
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of
-  // the division of two numbers:
-  if (buttonPushCounter % 3 == 0) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-    }
-   }
-  }
-  break;
-  default:
-  Serial.println("User Invalid"); //selecting invalid user e.g.'8'
-  break;
-}
-delay(1);
-}
-}
+      reading3 = digitalRead(buttonPin3);         //read button3
+      
+      if(takeReading == HIGH)
+      {
+          if(oddNumber == HIGH)
+              reading1 = digitalRead(buttonPin1);
+          if(evenNumber == HIGH)    
+              reading2 = digitalRead(buttonPin2);
+      } 
+    
+      // If the switch changed, due to noise or pressing:
+      if (reading1 != lastButtonState1 || reading2 != lastButtonState2 || reading3 != lastButtonState3) 
+      {
+        lastDebounceTime = micros();
+      }
+      
+      if ((micros() - lastDebounceTime) > debounceDelay) 
+      {
+          // whatever the reading is at, it's been there for longer
+          // than the debounce delay, so take it as the actual current state:
+          // if the button state has changed:
+          if (reading1 != buttonState1)
+          {
+                buttonState1 = reading1;
+                
+                // only toggle the LED if the new button state is HIGH
+                if (buttonState1 == HIGH) 
+                {
+                  Serial.print("Your reaction time is: ");
+                  Serial.print(lastDebounceTime - time1);
+                  Serial.println("us");
+                  Serial.println();
+                  printcount = 0;
+                }
+          }
+
+          if (reading2 != buttonState2)
+          {
+                buttonState2 = reading2;
+                
+                // only toggle the LED if the new button state is HIGH
+                if (buttonState2 == HIGH) 
+                {
+                  Serial.print("Your reaction time is: ");
+                  Serial.print(lastDebounceTime - time1);
+                  Serial.println("us");
+                  Serial.println();
+                  printcount = 0;
+                }
+          }
+
+          if (reading3 != buttonState3)
+          {
+                buttonState3 = reading3;
+                
+                // only toggle the LED if the new button state is HIGH
+                if (buttonState3 == HIGH) 
+                {
+                  Serial.println("READY TO GO");
+                  button3Pressed = HIGH;
+                  takeReading = HIGH;
+                }
+          }
+      }
+      lastButtonState1 = reading1;
+      lastButtonState2 = reading2;
+      lastButtonState3 = reading3;
 

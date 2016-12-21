@@ -101,8 +101,8 @@ void loop()
 	}
 
 	// Do Statistics
-	user.average[user.id] = average(&user.results, user.id);
-	user.variance[user.id] = variance(&user.results, user.id);
+	user.average[user.id] = average(user.results, user.id);
+	user.variance[user.id] = variance(user.results, user.id);
 	printStatistics(user.id);
 
 	delay(1000);	// Arbitrary wait of 1 second
@@ -113,26 +113,26 @@ void loop()
 //---------------------------------------------------FUNCTIONS---------------------------------------//
 
 
-float average(unsigned long *time_arr[][10], int id) {   // Declare a function that returns a float in the form of an average
+float average(unsigned long time_arr[][10], int id) {   // Declare a function that returns a float in the form of an average
 
 	unsigned long sum = 0;  // Declare a float to hold the sum of all the time from the array
 	int counter = 0;
 	for (int i = 0; i < 10; i++) {      // A for loop that sums the array
-		if (*time_arr[id][i] != 0) {
-			sum = sum + *time_arr[id][i];    // Add all entries from the array of timings.
+		if (time_arr[id][i] != 0) {
+			sum = sum + time_arr[id][i];    // Add all entries from the array of timings.
 			counter++;
 		}
 	}
 	return sum / counter; // Calculate average of the sum and eturn the average of the data type float
 }
 
-float variance(float *time_arr[][10], int id){ // Declare a function that returns a float in the form of variance
+float variance(unsigned long time_arr[][10], int id){ // Declare a function that returns a float in the form of variance
 
-	unsigned long sum1 = 0;
+	float sum1 = 0;
 	int counter1 = 0;
 	for (int i = 0; i < 10; i++){
-		if (*time_arr[id][i] != 0) {
-			sum1 = sum1 + (*time_arr[id][i] * *time_arr[id][i]);
+		if (time_arr[id][i] != 0) {
+			sum1 = sum1 + (time_arr[id][i] * time_arr[id][i]);
 		counter1++;
 		}
 	}

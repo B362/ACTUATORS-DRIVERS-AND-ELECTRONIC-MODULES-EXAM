@@ -173,7 +173,9 @@ void printStatistics(int id) {
 	return;
 }
 
-// this constant won't change:
+//Select User & Detects Button
+
+// This constant won't change:
 const int buttonPin = 2;    // the pin that the pushbutton is attached to
 const int ledPin = 13;       // the pin that the LED is attached to
 

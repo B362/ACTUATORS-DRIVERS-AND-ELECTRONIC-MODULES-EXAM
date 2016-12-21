@@ -102,8 +102,33 @@ void loop()
 
 	// Do average
 	// Do variance
-	// Print statistics
+	printStatistics(user.id);
 
 	delay(1000);	// Arbitrary wait of 1 second
 					// between experiments
+}
+
+
+//---------------------------------------------------FUNCTIONS---------------------------------------//
+
+void printStatistics(int id) {
+	struct userdata user;
+	Serial.print("Displaying results for user ");
+	Serial.println(id);
+	Serial.print("\n");
+	for (int i = 0; i < 10; i++) {
+		Serial.print("Trial #");
+		Serial.print(i);
+		if (user.status[id][i] == 'p') {
+			Serial.print(":	Passed - ");
+			Serial.println(user.results[id][i]);
+		}
+		else Serial.println(":	Failed");
+	}
+	Serial.print("Average:	");
+	Serial.println(user.average[id]);
+	Serial.print("Variance:	");
+	Serial.println(user.variance[id]);
+	Serial.println("\n");
+	return;
 }

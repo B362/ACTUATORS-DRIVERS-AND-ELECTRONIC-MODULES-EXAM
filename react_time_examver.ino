@@ -101,7 +101,12 @@ void loop()
 	}
 
 	// Do average
+	average(results[user.id][10]);
+
 	// Do variance
+	
+	variance(results[user.id][10]);
+	
 	printStatistics(user.id);
 
 	delay(1000);	// Arbitrary wait of 1 second
@@ -110,6 +115,39 @@ void loop()
 
 
 //---------------------------------------------------FUNCTIONS---------------------------------------//
+
+
+float average(float time_arr[][10]){   // Declare a function that returns a float in the form of an average
+
+  float sum = 0;  // Declare a float to hold the sum of all the time from the array
+  
+  for(unsigned int i=0, i<10, i++){      // A for loop that sums the array
+
+    sum = sum + time_arr[i];    // Add all entries from the array of timings.
+  }
+
+  float average = sum/10; // Calculate average of the sum
+
+  return average;  // Return the average of the data type float
+}
+
+
+float variance( float time_arr[][10]){ // Declare a function that returns a float in the form of variance
+
+    float sum1 = 0;
+    float variance = 0;
+    
+    for(unsigned int i=0, i<10, i++){
+
+      sum1 = sum1 + pow(time_arr[i], 2);
+    }
+
+    variance = sqrt((sum1/10));
+    
+    return variance;  
+}
+
+
 
 void printStatistics(int id) {
 	struct userdata user;

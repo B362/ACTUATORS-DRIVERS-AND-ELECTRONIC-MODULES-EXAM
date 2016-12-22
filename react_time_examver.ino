@@ -12,14 +12,12 @@
 
 struct userdata {
 	// This structure stores data and statistics for
-	// 7 users (size of our project group)
+	// up to 7 users (size of our project group)
 	int id;
 	unsigned long results[7][10];
 	char status[7][10];				// 'p' if passed, 'f' if failed
 	float average[7];
 	float variance[7];
-	//float allaverage;
-	//float allvariance;
 };
 
 //-------------------------------------------SETUP----------------------------------------//
@@ -43,21 +41,25 @@ void setup()
 
 void loop()
 {
-	// Select user
 	struct userdata user;
-	//user.id = SelectUser();
-	user.id = 0; //Placeholder
+	user.id = selectUser();
 
 	// Wait for start button
+	while (!digitalRead(ST)) delay(2);
+	Serial.println("Starting...");
 
-	for (int i; i < 10; i++) {
+	for (int i; i < 10; i++) {		// Do experiment 10 times
+		delay(random(500, 3000));	// Delay a random amount of time
+									// Between 0.5 and 3 seconds
 		int led = random(7, 9);
-		pinMode(led, 1);
-		// Detects button
-		int button = 0;	//Placeholder
-		// Detects time taken
-		unsigned long reacttime = 0; //Placeholder
-		pinMode(led, 0);
+		digitalWrite(led, 1);
+		int button;
+		unsigned long reacttime;
+		waitForButton(&button, &reacttime);		//  <--------- Use of pointers here
+		// In the case of the function above, since we wanted it
+		// to return 2 values, we used pointers, so the function
+		// can "return" these values directly to the variable's address
+		digitalWrite(led, 0);
 		switch (led)	//  <-------------------- Switch-Case structure here
 		{
 		default:
@@ -95,9 +97,6 @@ void loop()
 			}
 			break;
 		}
-
-		delay(random(500, 3000));	// Delay a random amount of time
-									// Between 0.5 and 3 seconds
 	}
 
 	// Do Statistics
@@ -105,28 +104,27 @@ void loop()
 	user.variance[user.id] = variance(user.results, user.id);
 	printStatistics(user.id);
 
-	delay(1000);	// Arbitrary wait of 1 second
-					// between experiments
+	delay(1000);
 }
 
 
 //---------------------------------------------------FUNCTIONS---------------------------------------//
 
 
-float average(unsigned long time_arr[][10], int id) {   // Declare a function that returns a float in the form of an average
+float average(unsigned long time_arr[][10], int id) {   // Declare a function that returns an average
 
 	unsigned long sum = 0;  // Declare a float to hold the sum of all the time from the array
 	int counter = 0;
 	for (int i = 0; i < 10; i++) {      // A for loop that sums the array
 		if (time_arr[id][i] != 0) {
-			sum = sum + time_arr[id][i];    // Add all entries from the array of timings.
+			sum = sum + time_arr[id][i];    // Add all VALID entries from the array of timings.
 			counter++;
 		}
 	}
-	return sum / counter; // Calculate average of the sum and eturn the average of the data type float
+	return sum / counter; // Calculate average of the sum and return the average of the data
 }
 
-float variance(unsigned long time_arr[][10], int id){ // Declare a function that returns a float in the form of variance
+float variance(unsigned long time_arr[][10], int id){ // Declare a function that returns a variance
 
 	float sum1 = 0;
 	int counter1 = 0;
@@ -159,4 +157,34 @@ void printStatistics(int id) {
 	Serial.println(user.variance[id]);
 	Serial.println("\n");
 	return;
+}
+
+int selectUser(void) {
+	if (Serial.available() > 0) {
+		Serial.print("Choose user:	");
+		return Serial.read();
+	}
+}
+
+void waitForButton(int *button, unsigned long *time) {
+	unsigned long temp = millis();	// Remember starting time
+	while (1) {		// Start infinite loop and return if condition are met
+					// (button press or timeout)
+		if (millis() - temp > 2000) {
+			*button = 0;	// Timeout
+			*time = 0;
+			return;
+		}
+		if (digitalRead(BR)) {
+			*button = BR;
+			*time = millis() - temp;
+			return;
+		}
+		if (digitalRead(BG)) {
+			*button = BG;
+			*time = millis() - temp;
+			return;
+		}
+		delay(2);	// Arbitrary
+	}
 }

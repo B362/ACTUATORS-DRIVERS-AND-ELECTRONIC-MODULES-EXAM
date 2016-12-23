@@ -3,10 +3,12 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define ST 3
-#define BG 3
-#define BR 4
-#define redled 7
+// REMEMBER TO ADJUST THE I/O PINS USED BELLOW
+
+#define ST 2  // Start button
+#define BG 3  // Button for green led
+#define BR 4  // Button for red led
+#define redled 7  // Self explanatory
 #define yelled 8
 #define grled 9
 

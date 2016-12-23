@@ -130,7 +130,10 @@ float variance(unsigned long time_arr[][10], int id){ // Declare a function that
 	int counter1 = 0;
 	for (int i = 0; i < 10; i++){
 		if (time_arr[id][i] != 0) {
-			sum1 = sum1 + (time_arr[id][i] * time_arr[id][i]);
+			sum1 = sum1 + (time_arr[id][i] * time_arr[id][i]);	// Normally we would
+													// use a pow() function, but it only
+													// accepts arguments of type "double",
+													// so we figured it would be simpler this way.
 		counter1++;
 		}
 	}
@@ -160,9 +163,11 @@ void printStatistics(int id) {
 }
 
 int selectUser(void) {
-	if (Serial.available() > 0) {
-		Serial.print("Choose user:	");
-		return Serial.read();
+	while (1) {
+		if (Serial.available() > 0) {
+			Serial.print("Choose user:	");
+			return Serial.read();
+		}
 	}
 }
 

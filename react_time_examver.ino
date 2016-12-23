@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define ST 2
+#define ST 3
 #define BG 3
 #define BR 4
 #define redled 7
@@ -45,16 +45,19 @@ void loop()
 	user.id = selectUser();
 
 	// Wait for start button
+	Serial.println("Press start");
 	while (!digitalRead(ST)) delay(2);
 	Serial.println("Starting...");
 
 	for (int i; i < 10; i++) {		// Do experiment 10 times
 		delay(random(500, 3000));	// Delay a random amount of time
 									// Between 0.5 and 3 seconds
-		int led = random(7, 9);
+		int led = random(7, 10);	// When converted to type int, will give
+                              // a number between 7 and 9
 		digitalWrite(led, 1);
-		int button;
-		unsigned long reacttime;
+		int button = 0;
+		unsigned long reacttime = 0;
+		Serial.print(i); Serial.print("	"); Serial.println(led);	// Debug
 		waitForButton(&button, &reacttime);		//  <--------- Use of pointers here
 		// In the case of the function above, since we wanted it
 		// to return 2 values, we used pointers, so the function
@@ -143,7 +146,7 @@ float variance(unsigned long time_arr[][10], int id){ // Declare a function that
 void printStatistics(int id) {
 	struct userdata user;
 	Serial.print("Displaying results for user ");
-	Serial.println(id);
+	Serial.println(id+1);
 	Serial.print("\n");
 	for (int i = 0; i < 10; i++) {
 		Serial.print("Trial #");
@@ -163,19 +166,26 @@ void printStatistics(int id) {
 }
 
 int selectUser(void) {
+  int sread = 0;
+  Serial.println("Choose user:  ");
 	while (1) {
 		if (Serial.available() > 0) {
-			Serial.print("Choose user:	");
-			return Serial.read();
+			sread =  Serial.read();
+      break;
 		}
+   delay(2);
 	}
+  sread -= 48;  // ASCII conversion
+	Serial.print("Selected user ");
+	Serial.println(sread);
+	return sread-1;
 }
 
 void waitForButton(int *button, unsigned long *time) {
 	unsigned long temp = millis();	// Remember starting time
 	while (1) {		// Start infinite loop and return if condition are met
 					// (button press or timeout)
-		if (millis() - temp > 2000) {
+		if (millis() - temp > 3000) {
 			*button = 0;	// Timeout
 			*time = 0;
 			return;

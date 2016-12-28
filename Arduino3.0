@@ -194,7 +194,7 @@ void printStatistics(userdatas* user) {
     Serial.print(": ");
     if ((Test == 5) && (yn ="yay")){
     //if (user.check == 5) {                                                       //GET RESULTS IF USER CHECK IS INSTEAD JUST INT AND NOT PART OF STRUCT
-      Serial.print("Passed ");
+    //Serial.print("Passed ");
       Serial.println(user->results[user->id][i]);
     }
     else if ((Test == 6) &&(yn ="nay")){

@@ -79,7 +79,7 @@ void loop()
       if (button == 1) {
         user.results[user.id][i] = reacttime;
         user.check = 5;
-        yn = "yay";
+        yn = "passed";
         Serial.println(yn);
         //digitalWrite(7, LOW);
         Test = 5;
@@ -87,7 +87,7 @@ void loop()
       else {
         user.results[user.id][i] = 0;
         user.check = 6;
-        yn = "nay";
+        yn = "failed";
         Serial.println(yn);
         //Serial.println();
         Test = 6;
@@ -99,7 +99,7 @@ void loop()
       if (button == 2) {
         user.results[user.id][i] = reacttime;
         user.check = 5;
-        yn = "yay";
+        yn = "passed";
         Serial.println(yn);
         //digitalWrite(8, LOW);
         Test = 5;
@@ -107,7 +107,7 @@ void loop()
       else {
         user.results[user.id][i] = 0;
         user.check = 6;
-        yn = "nay";
+        yn = "failed";
         Serial.println(yn);
         //Serial.println();
         Test = 6;
@@ -120,7 +120,7 @@ void loop()
         user.results[user.id][i] = reacttime;
         //user.check = 5;
         user.check = 5;
-        yn = "yay";
+        yn = "passed";
         Serial.println(yn);
         //digitalWrite(9, LOW);
         Test = 5;
@@ -128,7 +128,7 @@ void loop()
       else {
         user.results[user.id][i] = 0;
         user.check = 6;
-        yn = "nay";
+        yn = "failed";
         Serial.println(yn);
         //Serial.println();
         Test = 6;
@@ -192,12 +192,12 @@ void printStatistics(userdatas* user) {
     Serial.print("Trial #");
     Serial.print(i);
     Serial.print(": ");
-    if ((Test == 5) && (yn ="yay")){
+    if ((Test == 5) && (yn ="passed")){
     //if (user.check == 5) {                                                       //GET RESULTS IF USER CHECK IS INSTEAD JUST INT AND NOT PART OF STRUCT
     //Serial.print("Passed ");
       Serial.println(user->results[user->id][i]);
     }
-    else if ((Test == 6) &&(yn ="nay")){
+    else if ((Test == 6) &&(yn ="failed")){
     //else if (user.check == 6){
     //Serial.println("Failed");
       Serial.println(user->results[user->id][i]);

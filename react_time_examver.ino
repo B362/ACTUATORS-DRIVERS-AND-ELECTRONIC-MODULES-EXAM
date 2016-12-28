@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-// REMEMBER TO ADJUST THE I/O PINS USED BELLOW
+// REMEMBER TO ADJUST THE I/O PINS USED BELOW
 
 #define ST 2  // Start button
 #define BG 3  // Button for green led

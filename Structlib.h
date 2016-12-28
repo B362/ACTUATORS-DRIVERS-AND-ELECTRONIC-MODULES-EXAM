@@ -15,3 +15,9 @@ typedef struct {
 }userdatas;
 
 #endif
+/*Either put this file in the same project folder as the arduino file is in or do the following:
+* Click the arrow in the upper right corner of the arduino IDE
+* Click 'new tab'
+* Name the tab: "Structlib.h"
+* Put in the code that is above this comment.
+*/
